@@ -1,6 +1,6 @@
 from abc import ABCMeta
 
-from Structures.Dinamic_Array import Vector
+from Structures.Linked_lists.Node import Node
 
 class LinkedList(Vector): # ABCMeta - метакласс, который проверяет наличие реализации абстрактных методов текущего подкласса
 
@@ -21,6 +21,17 @@ class LinkedList(Vector): # ABCMeta - метакласс, который про�
     # def increase_memory(self):
 
     def append(self, item):
+        new_node = Node(item)
+
+        if self.head is None and self.tail is None:
+            self.head = new_node
+            self.tail = new_node
+        else:
+            self.tail.next_val = new_node # Меняем ссылку бывшего хвоста с Нан на New_node
+            self.tail = self.tail.next_val # Сделали хвостом new_node
+
+        self.size += 1
+
 
     def insert(self, index, item):
 

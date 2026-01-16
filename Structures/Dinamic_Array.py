@@ -98,7 +98,7 @@ class Vector(ABC):
     # СКОРРЕКТИРОВАЛА
     @abstractmethod
     def __setitem__(self, index, value): # Надо ли писать про добавление по несуществующему индексу типа insert?
-        if self.size == 0 or index > self.size or index < -(len(self.array)):
+        if self.size == 0 or index >= self.size or index < -self.size:
             raise IndexError
         else:
             self.array[index] = value
@@ -106,14 +106,14 @@ class Vector(ABC):
     # СКОРРЕКТИРОВАЛА
     @abstractmethod
     def __getitem__(self, index):
-        if self.size == 0 or index > self.size or index < -(len(self.array)):
+        if self.size == 0 or index >= self.size or index < -self.size:
             raise IndexError
         else:
             return self.array[index]
 
     @abstractmethod
     def __delitem__(self, index):
-       if index > len(self.array) or index < -(len(self.array)):
+       if index > len(self.array) or index < -self.size:
            raise IndexError
        else:
            if index < 0:
@@ -121,7 +121,7 @@ class Vector(ABC):
            unchange_part_right = self.array[index + 1:]
            self.array = self.array[:index]
            self.array += unchange_part_right
-
+# УБРАТЬ ПРОВЕРКУ
     def increase_memory(self):
         if self.size == self.capacity or self.size + 1 >= self.capacity: # убрать и проверить в методах
             self.capacity *= 2
@@ -140,7 +140,7 @@ class Vector(ABC):
         #         break # первый None замена на итем
         # self.size += 1 # переписать без цикла с использованием self.size
 
-# НЕ ПОНИМАЮ как переписать по аналогии аппенд
+# НЕ ПОНИМАЮ как переписать по аналогии ремув
     @abstractmethod
     def insert(self, index, item): # Добавить часть про size, соотношение с capacity, циклом сдвинуть часть массива
         unchange_part_left = self.array[:index] # неизменяемая часть массива (которая не сдвигается) слева
@@ -163,10 +163,10 @@ class Vector(ABC):
 
         for index in range(self.size): # Использовала линейный поиск, тк неясно упорядочен ли массив
             if self.array[index] == item:
-                self.array = self.array[:index]
+                self.array = self.array[:index] # ошибка
                 unchange_part_right = self.array[index + 1:]
                 self.array += unchange_part_right
-                break
+                break # дописать элс
 
     # СКОРРЕКТИРОВАЛА
     @abstractmethod
@@ -183,9 +183,9 @@ class Vector(ABC):
             del self.array[index]
             return last_item
 
-        if -(self.size) <= index < self.size: # Почему подчеркивается значение с минусом?
+        if -self.size <= index < self.size:
             del_item = self.array[index]
-            self.array = self.array[:index]
+            self.array = self.array[:index] # ошибка, поменять местами
             unchange_part_right = self.array[index + 1:]
             self.array += unchange_part_right
             return del_item
@@ -203,7 +203,7 @@ class Vector(ABC):
         while self.size < necessary_capacity:
             self.increase_memory()
 
-        for index in range(len(self.array[:start_len + 1]), necessary_capacity + 1):
+        for index in range(len(self.array[:start_len + 1]), necessary_capacity + 1): # пересчитать несесари + первый индекс start переписать
             new_array_index = 0
             self.array[index] = new_array[new_array_index]
             new_array_index += 1
@@ -215,12 +215,10 @@ class Vector(ABC):
 
 v = Vector(array=[0, 2, 4, 5])
 
+assert isinstance(v, Vector) # True
+assert len(v.array) == 4 # True - size
+assert v.capacity >= len(v.array) # True
+assert isinstance(v.array, list) # True
+
 iteration_array = v.__iter__()
 print(iteration_array.to_current(1))
-
-k = 0
-for i in v:
-    k += 1
-    print(i, k)
-
-print(len(v))
